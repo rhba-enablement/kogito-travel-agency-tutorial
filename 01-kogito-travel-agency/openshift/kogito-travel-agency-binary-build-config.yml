@@ -1,0 +1,59 @@
+---
+kind: Template
+apiVersion: v1
+metadata:
+  name: kogito-travel-agency
+objects:
+- apiVersion: build.openshift.io/v1
+  kind: BuildConfig
+  metadata:
+    labels:
+      app: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}
+  spec:
+    failedBuildsHistoryLimit: 5
+    nodeSelector: {}
+    output:
+      to:
+        kind: ImageStreamTag
+        name: "kogito-travel-agency:latest"
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      type: Binary
+    strategy:
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: "${BUILDER_IMAGE}"
+          namespace: "${BUILDER_IMAGE_NAMESPACE}"
+      type: Source
+    successfulBuildsHistoryLimit: 5
+    triggers: []
+parameters:
+- description: The name for the application.
+  name: APPLICATION_NAME
+  required: true
+  value: kogito-travel-agency-binary
+- name: CPU_REQUEST
+  required: true
+  value: '0.1'
+- name: CPU_LIMIT
+  required: true
+  value: '0.5'
+- name: MEMORY_REQUEST
+  required: true
+  value: '200Mi'
+- name: MEMORY_LIMIT
+  required: true
+  value: '500Mi'
+- name: APPLICATION_CONFIGMAP
+  required: true
+  value: kogito-travel-agency
+- name: BUILDER_IMAGE
+  required: true
+  value: redhat-openjdk18-openshift:1.4
+- name: BUILDER_IMAGE_NAMESPACE
+  required: true
+  value: openshift
